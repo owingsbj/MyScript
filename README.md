@@ -1,2 +1,2 @@
 # MyScript
-Simple scripting language interpreter for embedding in apps
+Subset of JavaScript, used for embedding in apps.
