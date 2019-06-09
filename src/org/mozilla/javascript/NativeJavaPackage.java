@@ -164,7 +164,8 @@ public class NativeJavaPackage extends ScriptableObject
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        this.classLoader = Context.getCurrentContext().getApplicationClassLoader();
+        // bjo - the line below doesn't deserialize
+        //this.classLoader = Context.getCurrentContext().getApplicationClassLoader();
     }
 
     @Override
