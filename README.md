@@ -1,4 +1,4 @@
 # MyScript
-Subset of JavaScript, used for embedding in apps.  This is based on Mozilla Rhino.  Thus, it has the same license.
 
-
+A subset of JavaScript, used for embedding in apps.  This is a subset of Mozilla Rhino, pruned to reduce space
+and eliminate features that are not used in Android app scripting.
