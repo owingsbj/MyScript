@@ -107,6 +107,7 @@ public final class IRFactory extends Parser
      */
     public ScriptNode transformTree(AstRoot root) {
         currentScriptOrFn = root;
+        sourceURI = currentScriptOrFn.getSourceName();  // bjo -- added for more informative error reporting
         this.inUseStrictDirective = root.isInStrictMode();
         int sourceStartOffset = decompiler.getCurrentOffset();
 
@@ -427,6 +428,7 @@ public final class IRFactory extends Parser
             target = left;
         } else {
             target = transform(left);
+            target.setLineno(left.lineno);   // bjo - added to propagate line no
         }
         decompiler.addToken(node.getType());
         return createAssignment(node.getType(),

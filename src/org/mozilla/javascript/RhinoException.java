@@ -42,7 +42,7 @@ public abstract class RhinoException extends RuntimeException
     public final String getMessage()
     {
         String details = details();
-        if (sourceName == null || lineNumber <= 0) {
+        if (sourceName == null || lineNumber < 0) {  // bjo - changed from lineNumber <= 0 so sourceName appears
             return details;
         }
         StringBuilder buf = new StringBuilder(details);

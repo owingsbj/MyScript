@@ -521,6 +521,13 @@ public class Node implements Iterable<Node>
 
     public void setLineno(int lineno) {
         this.lineno = lineno;
+        // bjo - set child nodes as well if needed
+        for (Node childNode = first; childNode != null; childNode = childNode.next) {
+        	if (childNode.lineno <= 0) {
+        		childNode.setLineno(lineno);
+        	}
+        }
+        // end bjo
     }
 
     /** Can only be called when <tt>getType() == Token.NUMBER</tt> */

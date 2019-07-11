@@ -120,7 +120,7 @@ public class Parser
     CompilerEnvirons compilerEnv;
     private ErrorReporter errorReporter;
     private IdeErrorReporter errorCollector;
-    private String sourceURI;
+    protected String sourceURI;   // bjo -- changed from prive to set in IRFactory subclass
     private char[] sourceChars;
 
     boolean calledByCompileFunction;  // ugly - set directly by Context
@@ -331,6 +331,16 @@ public class Parser
             throw new ParserException();
         }
     }
+    
+    // BJO - added, in order to report the line (also made changes to have sourceURI set in IRFactory)
+    void reportError(String messageId, int line) {
+        String message = lookupMessage(messageId);
+        errorReporter.error(message, sourceURI, line, "", 0);
+        if (!compilerEnv.recoverFromErrors()) {
+            throw new ParserException();
+        }
+    }
+    // end BJO
 
     // Computes the absolute end offset of node N.
     // Use with caution!  Assumes n.getPosition() is -absolute-, which
@@ -3952,12 +3962,12 @@ public class Parser
                   case Token.CONST:
                   case Token.LET:
                   case Token.VAR:
-                      reportError("msg.bad.assign.left");
+                      reportError("msg.bad.assign.left", left.lineno);
               }
               comma.addChildToBack(simpleAssignment(left, createName(tempName)));
               break;
           default:
-              reportError("msg.bad.assign.left");
+              reportError("msg.bad.assign.left", left.lineno);
         }
         if (empty) {
             // Don't want a COMMA node with no children. Just add a zero.
@@ -4175,14 +4185,18 @@ public class Parser
     protected void checkMutableReference(Node n) {
         int memberTypeFlags = n.getIntProp(Node.MEMBER_TYPE_PROP, 0);
         if ((memberTypeFlags & Node.DESCENDANTS_FLAG) != 0) {
-            reportError("msg.bad.assign.left");
+            reportError("msg.bad.assign.left", n.getLineno());  // bjo - changed to add line no
         }
     }
 
     // remove any ParenthesizedExpression wrappers
     protected AstNode removeParens(AstNode node) {
         while (node instanceof ParenthesizedExpression) {
-            node = ((ParenthesizedExpression)node).getExpression();
+        	// bjo - propagate lineno
+            //node = ((ParenthesizedExpression)node).getExpression();
+        	AstNode newNode = ((ParenthesizedExpression)node).getExpression();
+        	newNode.setLineno(node.lineno);
+        	node = newNode;
         }
         return node;
     }
